@@ -1,10 +1,7 @@
 import { Editor } from "./editor";
 import { NetworkAdapter } from "./adapter";
-import { Network, Producer } from "@server-sim/simulation";
-import type { BaseNode } from "@server-sim/simulation/flow/network/base";
-import { Node } from "@server-sim/simulation/flow/network/node";
-import { Consumer } from "@server-sim/simulation/flow/network/consumer";
-import { ApiRequest } from "@server-sim/simulation/flow/network/request";
+import { ApiRequest, BaseNode, Consumer, Network, Producer, Node } from "@server-sim/simulation";
+
 
 /**
  * Example integration of the editor with a Network.

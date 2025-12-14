@@ -2,10 +2,11 @@
   "name": "@server-sim/editor",
   "version": "0.0.1",
   "type": "module",
-  "main": "./editor/index.ts",
-  "types": "./editor/index.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    ".": "./editor/index.ts"
+    ".": "./src/index.ts",
+    "./starter": "./src/starter.ts"
   },
   "scripts": {
     "build": "tsc",

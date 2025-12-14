@@ -1,5 +1,8 @@
-import Game from '../apps/game/src/game/game.js';
-import { Network, Producer, Consumer, ApiRequest, Node, DatabaseRequest, StaticRequest } from '@server-sim/simulation';
+import Game from '@server-sim/game/game';
+import { Network, Producer } from '@server-sim/simulation';
+import { Node } from '@server-sim/simulation/flow/network/node';
+import { Consumer } from '@server-sim/simulation/flow/network/consumer';
+import { ApiRequest, DatabaseRequest, StaticRequest } from '@server-sim/simulation/flow/network/request';
 import { PerformanceMonitor } from '@server-sim/simulation/utils/performance';
 import { Logger } from '@server-sim/simulation/utils/logger';
 
@@ -13,7 +16,7 @@ const server = new Node([StaticRequest, ApiRequest], [StaticRequest, DatabaseReq
 
 server.consumes = new Set([StaticRequest, ApiRequest])
 
-server.processRequest = (tick, req) => {
+server.processRequest = (tick: Engine.Tick, req: Networking.Request) => {
     // if api request convert it to an database request
     if (req.type === 'ApiRequest') {
         return [new DatabaseRequest(tick)]
@@ -22,7 +25,7 @@ server.processRequest = (tick, req) => {
     return req
 }
 
-server.calcRequestProcessingTime = (req) => {
+server.calcRequestProcessingTime = (req: Networking.Request) => {
     if (req.type === 'StaticFile') {
         return 5 // 5ms for static files
     }
@@ -41,7 +44,7 @@ network.connect(root, server)
 network.connect(server, storage)
 network.connect(server, db)
 
-storage.calcRequestProcessingTime = (req) => {
+storage.calcRequestProcessingTime = (_req: Networking.Request) => {
     // switch to hdd fallback if degraded
     const baseTime = storage.degraded > 0.5 ? 100 : 5
     return baseTime + baseTime * Math.floor(storage.requests.getSize() / 2)

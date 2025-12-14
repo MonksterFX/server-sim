@@ -1,9 +1,6 @@
 import { Editor } from "./editor";
 import { createEditorNode } from "./editorNode";
-import type { EditorNode } from "./types";
-import type { Network } from "@server-sim/simulation";
-import type { BaseNode } from "@server-sim/simulation/flow/network/base";
-import { Connection } from "@server-sim/simulation/flow/network/connection";
+import type { BaseNode, Network } from "@server-sim/simulation";
 
 /**
  * Adapter that links the abstract Editor to the simulation Network.
