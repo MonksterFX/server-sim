@@ -205,12 +205,16 @@ export class Editor {
       return;
     }
 
-    // Create new node at clicked position if in add mode
+    // Only create new node if explicitly in add mode with a selected node type
+    // This prevents unintended node creation when in other modes or when no type is selected
     if (this.mode === "add" && this.selectedNodeType) {
       const [snappedX, snappedY] = snapToGrid(point.x, point.y, this.gridConfig);
       this.createNodeAt(snappedX, snappedY, undefined, this.selectedNodeType);
       return;
     }
+
+    // If mode is "none" or any other state, do nothing
+    // This ensures nodes are only created when explicitly in add mode
   }
 
   /**

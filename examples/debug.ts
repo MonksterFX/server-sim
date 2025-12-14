@@ -1,23 +1,22 @@
-import Game from './game/game';
-import { Network, Producer, Consumer, ApiRequest, Node, DatabaseRequest } from '../game/flow/index';
-import { PerformanceMonitor } from '../game/utils/performance';
-import { Logger } from '../game/utils/logger';
+import Game from '../apps/game/src/game/game.js';
+import { Network, Producer, Consumer, ApiRequest, Node, DatabaseRequest, StaticRequest } from '@server-sim/simulation';
+import { PerformanceMonitor } from '@server-sim/simulation/utils/performance';
+import { Logger } from '@server-sim/simulation/utils/logger';
 
 const game = new Game()
-const root = new Producer()
+// Producer requires at least one request type
+const root = new Producer([ApiRequest])
 const network = Network.create(root, []);
 
-// static server
-const server = new Node()
+// static server - Node needs consumes and produces types
+const server = new Node([StaticRequest, ApiRequest], [StaticRequest, DatabaseRequest])
 
-server.consumes = new Set(['StaticFile', 'ApiRequest'])
+server.consumes = new Set([StaticRequest, ApiRequest])
 
 server.processRequest = (tick, req) => {
     // if api request convert it to an database request
     if (req.type === 'ApiRequest') {
-        req.subrequests = [new DatabaseRequest(tick)]
-
-        return req.subrequests
+        return [new DatabaseRequest(tick)]
     }
 
     return req
@@ -25,14 +24,14 @@ server.processRequest = (tick, req) => {
 
 server.calcRequestProcessingTime = (req) => {
     if (req.type === 'StaticFile') {
-        return 5 // 100ms for static files
+        return 5 // 5ms for static files
     }
 
     return Math.floor(server.requests.getSize() / 2 + 50)
 }
 
-const storage = new Consumer(['StaticFile'])
-const db = new Consumer(['Database'])
+const storage = new Consumer([StaticRequest])
+const db = new Consumer([DatabaseRequest])
 
 network.addNode(server)
 network.addNode(storage)

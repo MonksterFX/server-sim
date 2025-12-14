@@ -4,3 +4,4 @@ export * from "./network/producer";
 export * from "./network/consumer";
 export * from "./network/connection";
 export * from "./network/request";
+export * from "./network/base";

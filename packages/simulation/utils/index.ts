@@ -32,3 +32,7 @@ export function randomSelectWeighted<T>(values: T[], weights: number[]): T {
 
     return values[values.length - 1];
 }
+
+// Export logger and performance utilities
+export * from "./logger";
+export * from "./performance";

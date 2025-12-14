@@ -1,9 +1,7 @@
-
-import type { Network } from "../../game/flow";
-import { Logger } from "../../game/utils/logger";
-import { PerformanceMonitor } from "../../game/utils/performance";
-import type { Szenario } from "./szene";
-
+import type { Network } from "@server-sim/simulation";
+import { Logger } from "@server-sim/simulation/utils/logger";
+import { PerformanceMonitor } from "@server-sim/simulation/utils/performance";
+import type { Szenario } from "./szenario";
 
 export default class Game {
     private _logger = Logger.getLogger('Game');

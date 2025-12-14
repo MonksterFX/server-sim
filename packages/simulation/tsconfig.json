@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true
+  },
+  "include": ["flow/**/*", "utils/**/*", "types/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

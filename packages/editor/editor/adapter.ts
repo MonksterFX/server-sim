@@ -1,9 +1,9 @@
 import { Editor } from "./editor";
 import { createEditorNode } from "./editorNode";
 import type { EditorNode } from "./types";
-import type { Network } from "../../game/flow";
-import type { BaseNode } from "../../game/flow/network/base";
-import { Connection } from "../../game/flow/network/connection";
+import type { Network } from "@server-sim/simulation";
+import type { BaseNode } from "@server-sim/simulation/flow/network/base";
+import { Connection } from "@server-sim/simulation/flow/network/connection";
 
 /**
  * Adapter that links the abstract Editor to the simulation Network.
@@ -199,8 +199,14 @@ export class NetworkAdapter {
     // For now, we'll preserve existing mappings and only add new nodes
 
     const networkNodes = this.network.getNodes();
+    const rootNode = this.network.getRootNode();
 
     for (const baseNode of networkNodes) {
+      // Skip the root node - it should not appear in the editor
+      if (baseNode === rootNode) {
+        continue;
+      }
+
       const existingEditorId = this.baseNodeMap.get(baseNode);
 
       if (!existingEditorId) {

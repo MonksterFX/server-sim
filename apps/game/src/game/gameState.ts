@@ -1,4 +1,4 @@
-import type { Network } from "../../game/flow";
+import type { Network } from "@server-sim/simulation";
 
 class GameState {
     state: "menu" | "playing" | "paused" | "gameover" = "menu";

@@ -1,0 +1,20 @@
+{
+  "name": "@server-sim/editor",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./editor/index.ts",
+  "types": "./editor/index.ts",
+  "exports": {
+    ".": "./editor/index.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@server-sim/simulation": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
