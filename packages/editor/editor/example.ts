@@ -1,10 +1,10 @@
 import { Editor } from "./editor";
 import { NetworkAdapter } from "./adapter";
-import { Network, Producer } from "../../game/flow";
-import type { BaseNode } from "../../game/flow/network/base";
-import { Node } from "../../game/flow/network/node";
-import { Consumer } from "../../game/flow/network/consumer";
-import { ApiRequest } from "../../game/flow/network/request";
+import { Network, Producer } from "@server-sim/simulation";
+import type { BaseNode } from "@server-sim/simulation/flow/network/base";
+import { Node } from "@server-sim/simulation/flow/network/node";
+import { Consumer } from "@server-sim/simulation/flow/network/consumer";
+import { ApiRequest } from "@server-sim/simulation/flow/network/request";
 
 /**
  * Example integration of the editor with a Network.

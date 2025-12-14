@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["packages"]
+  "include": ["packages", "apps", "examples"]
 }
