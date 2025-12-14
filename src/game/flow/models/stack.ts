@@ -1,29 +1,31 @@
 type Request =  Networking.Request // override typing for request
 type StackItem = {executedAt: Engine.Tick, request: Request}
 
-type StackTable = StackItem[]
-
 export class Stack {
 
-    private table: StackTable = []
+    private table: Map<string, StackItem> = new Map()
 
     add(item: StackItem){
-        this.table.push(item)
+        this.table.set(item.request.uuid, item)
     }
 
     remove(item:  StackItem){
-        this.table = this.table.filter((stackItem)=>stackItem.request.uuid !== item.request.uuid)
+        this.table.delete(item.request.uuid)
     }
 
     clear() {
-        this.table = []
+        this.table.clear()
     }
 
     getNext(tick: Engine.Tick) {
-        return  this.table.filter(item => item.executedAt <= tick)
+        return  Array.from(this.table.values()).filter(item => item.executedAt <= tick)
     }
 
     getSize(){
-        return this.table.length
+        return this.table.size
+    }
+
+    getAll(){
+        return Array.from(this.table.values())
     }
 }

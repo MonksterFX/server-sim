@@ -2,25 +2,36 @@ import { Stack } from "../models/stack"
 import type { Connection } from "./connection"
 
 export abstract class BaseNode {
+
+    /* Static ID generator */
+    private static nextId: number = 0;
+    readonly id: number = BaseNode.nextId++;
+
     type: unknown
+    name: string = `BaseNode:${this.id}`
+    description: string = ''
 
-    /** The set of connection types this node consumes. */
-    consumes: Set<Networking.ConnectionType> | null = null
+    // optional target identifier for easier routing
+    target?: string;
 
-    readonly outgoingConnections: Set<Connection> = new Set()
+    requestCount: number = 0;
 
     /** Degradation level of the node, ranging from 0.0 (no degradation) to 1.0 (fully degraded). */
-    degarded: number = 0.0 // 0.0 - 1.0
+    degraded: number = 0.0 // 0.0 - 1.0
 
-    /**
-     * Incoming Requests Queue
-     */
+    /***********************
+     * Routing properties   
+    ***********************/ 
+    /** The set of connection types this node supports */
+    readonly consumes: Set<CTOR<Networking.Request>> = new Set()
+    /** The set of connection types this node supports */
+    readonly produces: Set<CTOR<Networking.Request>> = new Set()
+
+    readonly incomingConnections: Set<Connection> = new Set()
+    readonly outgoingConnections: Set<Connection> = new Set()
+
+    /** Incoming Requests Queue */
     requests: Stack = new Stack()
-
-    /**
-     * Outgoing Responses Queue
-     */
-    // responses: Stack = new Stack()
 
     /**
      * Calculates the time in milliseconds an incoming request will take to process.
@@ -29,9 +40,6 @@ export abstract class BaseNode {
      * @returns The time in milliseconds the request will take to process.
      */
     calcRequestProcessingTime: (request: Networking.Request) => number = () => 10
-
-    // function which calculates the time in ms an response will take, by default 10ms
-    // calcResponseProcessingTime: (request: RequestWithResponse)=>number = () => 1
 
     // callbacks for advanced use cases
     // onRequest: EventHandler<RequestEvent>
@@ -114,5 +122,19 @@ export abstract class BaseNode {
             }
         }
 
+    }
+
+    removeNode(tick: Engine.Tick) {
+        // clean connections
+        this.outgoingConnections.forEach(con=>con.remove())
+        this.incomingConnections.forEach(con=>con.remove())
+        
+        // end all requests
+        this.requests.getAll().forEach((item)=>{
+            item.request.success = false
+            item.request.endedAt = tick
+        })
+
+        this.requests.clear()
     }
 }

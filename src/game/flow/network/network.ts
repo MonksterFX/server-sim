@@ -6,12 +6,13 @@ import { Producer } from "./producer";
 type NodeConstructor = CTOR<BaseNode>;
 
 export class Network {
-    private nodes: BaseNode[]
+    private nodes: Set<BaseNode>
     private rootNode: Producer
+    private targetsList: Map<string, Set<BaseNode>> = new Map();
 
     private constructor(rootNode: Producer, nodes: BaseNode[]){
         this.rootNode = rootNode;
-        this.nodes = [rootNode, ...nodes];
+        this.nodes = new Set([rootNode, ...nodes]);
     }
     
     static create(rootNode: Producer, nodes: NodeConstructor[]){
@@ -36,11 +37,18 @@ export class Network {
     }
 
     addNode(node: BaseNode){
-        this.nodes.push(node);
+        this.nodes.add(node);
+        
+        if(node.target){
+            if(!this.targetsList.has(node.target)){
+                this.targetsList.set(node.target, new Set());
+            }
+            this.targetsList.get(node.target)!.add(node);
+        }   
     }
 
     getNodes(): BaseNode[] {
-        return this.nodes;
+        return Array.from(this.nodes);  
     }
 
     getRootNode(): Producer {
@@ -48,6 +56,7 @@ export class Network {
     }
 
     connect(from: BaseNode, to: BaseNode){
+        // check if you can connect nodes
         const con = new Connection(from, to)
         from.addConnection(con)
     }
@@ -67,6 +76,7 @@ export class Network {
         while(stack.length > 0){
             const currentNode = stack.pop()!;
             
+            // TODO: convert to for loop because of performance?
             for(const connection of currentNode.outgoingConnections){
                 const nextNode = connection.to;
                 if(!visited.has(nextNode)){

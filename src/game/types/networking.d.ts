@@ -1,17 +1,21 @@
 namespace Networking {
     type Request = {
         uuid: string;
-        type: Networking.ConnectionType;
-
-        // method: 'GET' | 'POST';
-
-        // response: Response | null;
+        type: Networking.RequestType;
+        action: Networking.RequestAction;
+        target?: string;
 
         // tracability
         startedAt: number;
         endedAt?: number;
         success: boolean;
-        subrequests?: Networking.Request[];
+
+        // TODO: track generated subrequests
+        // subrequests?: Networking.Request[];
+
+        // TODO: link response
+        // response: Response | null;
+
     }
 
     type RequestWithResponse = Request & {
@@ -24,6 +28,8 @@ namespace Networking {
         request: Request
     }
 
-    type ConnectionType = 'StaticFile' | 'ApiRequest' | 'Database' | 'Event' | 'FaultRequest'
+    type RequestType = 'StaticFile' | 'ApiRequest' | 'Database' | 'Event' | 'FaultRequest'
+    type RequestAction = 'READ' | 'WRITE' | 'EXECUTE' | 'ALL'
+    type ConnectionType = `${RequestType}:${RequestAction}`
 }
 

@@ -1,3 +1,3 @@
-import Game from "../game/game";
+import Game from "./game/game";
 
 window["game"] = new Game();

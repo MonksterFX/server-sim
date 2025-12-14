@@ -1,5 +1,7 @@
-import Game from '../game/game';
-import { Network, Producer, Consumer, ApiRequest, StaticRequest, Node, DatabaseRequest, FaultyRequest } from '../game/flow/index';
+import Game from './game/game';
+import { Network, Producer, Consumer, ApiRequest, Node, DatabaseRequest } from '../game/flow/index';
+import { PerformanceMonitor } from '../game/utils/performance';
+import { Logger } from '../game/utils/logger';
 
 const game = new Game()
 const root = new Producer()
@@ -12,7 +14,7 @@ server.consumes = new Set(['StaticFile', 'ApiRequest'])
 
 server.processRequest = (tick, req) => {
     // if api request convert it to an database request
-    if(req.type === 'ApiRequest'){
+    if (req.type === 'ApiRequest') {
         req.subrequests = [new DatabaseRequest(tick)]
 
         return req.subrequests
@@ -22,14 +24,14 @@ server.processRequest = (tick, req) => {
 }
 
 server.calcRequestProcessingTime = (req) => {
-    if(req.type === 'StaticFile'){
+    if (req.type === 'StaticFile') {
         return 5 // 100ms for static files
     }
 
     return Math.floor(server.requests.getSize() / 2 + 50)
 }
 
-const storage= new Consumer(['StaticFile'])
+const storage = new Consumer(['StaticFile'])
 const db = new Consumer(['Database'])
 
 network.addNode(server)
@@ -46,9 +48,33 @@ storage.calcRequestProcessingTime = (req) => {
     return baseTime + baseTime * Math.floor(storage.requests.getSize() / 2)
 }
 
-for(let i = 0; i < 1000; i++){
-    root.generate(game.currentTick, 1_000, [ApiRequest]);
-    game.simulate(network, 100);
+Logger.logLevel = 'verbose';
+
+const perMon = new PerformanceMonitor();
+const perMon2 = new PerformanceMonitor();
+
+console.log(`\n--- Run with ${100_000} requests for 2000 Ticks ---`)
+const startTime = performance.now();
+for (let i = 0; i < 2000; i++) {
+    
+    if(i % 1000 === 0){
+        // debugger
+        perMon.startTask();
+        root.generate(game.currentTick, 100_000, [ApiRequest]);
+        perMon.endTask();
+    }
+
+
+    perMon2.startTask();
+    game.simulate(network, 1);
+    perMon2.endTask();
 }
 
+console.log(`Total time: ${(performance.now() - startTime).toFixed(2)} ms`)
+console.table([
+    { name: 'Request generation', avgTime: perMon.avg.toFixed(), max: perMon.max.toFixed(), min: perMon.min.toFixed() },
+    { name: 'Network simulation', avgTime: perMon2.avg.toFixed(), max: perMon2.max.toFixed(), min: perMon2.min.toFixed() }
+])
 console.log('Network nodes:', network.getNodes());
+
+console.log('Request processed by all consumers:', storage.requestCount + db.requestCount);

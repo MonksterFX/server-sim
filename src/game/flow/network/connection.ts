@@ -12,5 +12,13 @@ export class Connection {
         
         this.from = from;
         this.to = to;
+        
+        this.to.incomingConnections.add(this);
+        this.from.outgoingConnections.add(this);
+    }
+
+    remove(){
+        this.to.incomingConnections.delete(this);
+        this.from.outgoingConnections.delete(this);
     }
 }
