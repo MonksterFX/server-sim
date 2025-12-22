@@ -1,3 +1,7 @@
+// Export logger and performance utilities
+export * from "./logger";
+export * from "./performance";
+
 export function  range(start: number, end: number): number[] {
     const result: number[] = [];
     for (let i = start; i <= end; i++) {
@@ -33,6 +37,3 @@ export function randomSelectWeighted<T>(values: T[], weights: number[]): T {
     return values[values.length - 1];
 }
 
-// Export logger and performance utilities
-export * from "./logger";
-export * from "./performance";
