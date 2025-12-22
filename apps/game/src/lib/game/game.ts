@@ -1,6 +1,5 @@
 import type { Network } from "@server-sim/simulation";
-import { Logger } from "@server-sim/simulation/utils/logger";
-import { PerformanceMonitor } from "@server-sim/simulation/utils/performance";
+import { Logger, PerformanceMonitor } from "@server-sim/simulation/utils";
 import type { Szenario } from "./szenario";
 
 export default class Game {
